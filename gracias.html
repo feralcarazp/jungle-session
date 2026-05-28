@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0907" />
+
+  <title>¡Gracias! · Jungle Session — Fer Alcaraz</title>
+  <meta name="description" content="Tu compra fue realizada correctamente. Completá tus datos para recibir la entrada digital." />
+  <meta name="robots" content="noindex,follow" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" />
+
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="page-fade">
+
+  <!-- ============== NAV ============== -->
+  <header class="nav is-scrolled" id="nav">
+    <div class="container">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="Fer Alcaraz — Inicio">
+          <span class="nav__brand-mark">F</span>
+          <span>Fer Alcaraz</span>
+        </a>
+        <a class="btn btn--ghost nav__cta" href="/">
+          Volver al inicio
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="gracias">
+    <div class="container">
+      <div class="gracias__wrap">
+
+        <!-- Left: success message + form -->
+        <div>
+          <div class="gracias__head reveal is-in">
+            <div class="gracias__check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12l5 5L20 7"/>
+              </svg>
+            </div>
+            <h1 class="gracias__title">Tu compra fue realizada correctamente.</h1>
+            <p class="gracias__sub">
+              Solo necesitamos un par de datos para emitir tu entrada y mandarte
+              el comprobante por email.
+            </p>
+          </div>
+
+          <form class="form reveal is-in" id="ticketForm" novalidate>
+            <h2 class="form__title">Tus datos</h2>
+            <p class="form__sub">Completá los campos a continuación.</p>
+
+            <div class="field">
+              <input
+                class="field__input"
+                type="text"
+                id="name"
+                name="name"
+                autocomplete="name"
+                required
+                minlength="2"
+                placeholder=" " />
+              <label class="field__label" for="name">Nombre completo</label>
+            </div>
+
+            <div class="field">
+              <input
+                class="field__input"
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                required
+                placeholder=" " />
+              <label class="field__label" for="email">Email</label>
+            </div>
+
+            <div class="field">
+              <input
+                class="field__input"
+                type="tel"
+                id="whatsapp"
+                name="whatsapp"
+                inputmode="tel"
+                autocomplete="tel"
+                required
+                minlength="6"
+                placeholder=" " />
+              <label class="field__label" for="whatsapp">WhatsApp</label>
+              <div class="field__hint">Con código de país. Ej: +54 9 379 ...</div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--large form__cta" id="submitBtn">
+              Confirmar y generar entrada
+              <span class="arrow" aria-hidden="true">→</span>
+            </button>
+
+            <div class="form__success" id="formSuccess" aria-live="polite">
+              <h3>Listo. Te llega todo por mail en unos minutos.</h3>
+              <p>Mientras tanto, tu entrada digital aparece a la derecha. Guardala.</p>
+            </div>
+          </form>
+
+          <a class="back-link" href="/">
+            <span aria-hidden="true">←</span> Volver al inicio
+          </a>
+        </div>
+
+        <!-- Right: digital ticket -->
+        <aside aria-label="Tu entrada digital">
+          <div class="ticket" id="ticket">
+            <div class="ticket__notch ticket__notch--left" aria-hidden="true"></div>
+            <div class="ticket__notch ticket__notch--right" aria-hidden="true"></div>
+
+            <div class="ticket__top">
+              <div class="ticket__brand">Fer Alcaraz</div>
+              <div class="ticket__title">Jungle Session</div>
+              <div class="ticket__subtitle">Recital acústico</div>
+            </div>
+
+            <div class="ticket__body" id="ticketBody">
+              <div class="ticket__placeholder" id="ticketPlaceholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z"/>
+                  <path d="M10 6v12" stroke-dasharray="2 2"/>
+                </svg>
+                Tu entrada se genera al completar el formulario.
+              </div>
+            </div>
+
+            <div class="ticket__foot">
+              Mostrá esta entrada en la puerta · Junín 1462, Corrientes
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const $ = (s, r = document) => r.querySelector(s);
+      const form = $('#ticketForm');
+      const success = $('#formSuccess');
+      const submitBtn = $('#submitBtn');
+      const ticketBody = $('#ticketBody');
+      const placeholder = $('#ticketPlaceholder');
+
+      // Recover qty/total from sessionStorage if available
+      let qty = 1;
+      let total = 10000;
+      try {
+        const sq = parseInt(sessionStorage.getItem('js_qty') || '1', 10);
+        const st = parseInt(sessionStorage.getItem('js_total') || '10000', 10);
+        if (sq > 0) qty = sq;
+        if (st > 0) total = st;
+      } catch (_) {}
+
+      const formatARS = (n) =>
+        '$' + n.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+      // Generate ticket ID
+      const today = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const dateTag = `${pad(today.getDate())}${pad(today.getMonth() + 1)}${String(today.getFullYear()).slice(-2)}`;
+      const random = Math.floor(Math.random() * 9000 + 1000);
+      const ticketId = `FA-JS-${dateTag}-${random}`;
+
+      function buildTicket(name) {
+        const labelEntradas = qty === 1 ? '1 entrada' : `${qty} entradas`;
+        ticketBody.innerHTML = `
+          <div class="ticket__row">
+            <span class="ticket__label">Nombre</span>
+            <span class="ticket__value">${escapeHtml(name)}</span>
+          </div>
+          <div class="ticket__row">
+            <span class="ticket__label">Cantidad</span>
+            <span class="ticket__value">${labelEntradas}</span>
+          </div>
+
+          <div class="ticket__divider"></div>
+
+          <div class="ticket__row">
+            <span class="ticket__label">Fecha</span>
+            <span class="ticket__value">Sáb 6 de Junio</span>
+          </div>
+          <div class="ticket__row">
+            <span class="ticket__label">Hora</span>
+            <span class="ticket__value">18:00 hs</span>
+          </div>
+
+          <div class="ticket__row ticket__row--full">
+            <span class="ticket__label">Lugar</span>
+            <span class="ticket__value">Jungle Bar · Junín 1462, Corrientes</span>
+          </div>
+
+          <div class="ticket__divider"></div>
+
+          <div class="ticket__row">
+            <span class="ticket__label">Total</span>
+            <span class="ticket__value ticket__value--accent">${formatARS(total)} ARS</span>
+          </div>
+          <div class="ticket__row">
+            <span class="ticket__label">Código</span>
+            <span class="ticket__id">${ticketId}</span>
+          </div>
+        `;
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[c]);
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          // surface native validation messages
+          form.reportValidity();
+          return;
+        }
+
+        const name = $('#name').value.trim();
+        // const email = $('#email').value.trim();
+        // const whatsapp = $('#whatsapp').value.trim();
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Generando...';
+
+        // Simulate processing for UX
+        setTimeout(() => {
+          buildTicket(name);
+          submitBtn.style.display = 'none';
+          success.classList.add('is-active');
+
+          // Hide form fields with a soft transition
+          [...form.querySelectorAll('.field')].forEach((f) => {
+            f.style.transition = 'opacity 0.4s ease, transform 0.4s ease, max-height 0.6s ease';
+            f.style.opacity = '0.4';
+          });
+
+          // Scroll the ticket into view on mobile
+          if (window.innerWidth < 880) {
+            $('#ticket').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 600);
+      });
+
+      // Live preview while typing the name
+      $('#name').addEventListener('input', (e) => {
+        const v = e.target.value.trim();
+        if (v.length > 1 && placeholder) {
+          // No-op live preview; only render full ticket on submit
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
