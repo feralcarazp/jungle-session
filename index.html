@@ -266,23 +266,52 @@
             Sumá una entrada más y pasás al precio promo: $7.000 c/u.
           </p>
 
-          <a
-            id="buyBtn"
-            class="btn btn--primary btn--large buy__cta"
-            href="https://mpago.la/1K9EB21"
-            target="_blank"
-            rel="noopener"
-            data-cta="comprar">
-            Comprar entrada
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
+          <form class="buy__form" id="buyForm" novalidate>
+            <div class="field">
+              <input class="field__input" type="text" id="buyName" name="nombre"
+                     autocomplete="name" required minlength="2" placeholder=" " />
+              <label class="field__label" for="buyName">Nombre completo</label>
+            </div>
+
+            <div class="field">
+              <input class="field__input" type="email" id="buyEmail" name="email"
+                     autocomplete="email" required placeholder=" " />
+              <label class="field__label" for="buyEmail">Email</label>
+            </div>
+
+            <div class="field">
+              <input class="field__input" type="tel" id="buyWhatsapp" name="whatsapp"
+                     inputmode="tel" autocomplete="tel" required minlength="6" placeholder=" " />
+              <label class="field__label" for="buyWhatsapp">WhatsApp</label>
+              <div class="field__hint">Con código de área. Ej: 379 412 3456</div>
+            </div>
+
+            <!-- Hidden fields for the email notification -->
+            <input type="hidden" name="cantidad" id="buyQty" value="1" />
+            <input type="hidden" name="precio_total" id="buyTotal" value="$10.000 ARS" />
+            <input type="hidden" name="link_mp" id="buyMpLink" value="https://mpago.la/1K9EB21" />
+            <input type="hidden" name="_subject" value="🌅 Nueva entrada Jungle Session" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_captcha" value="false" />
+
+            <button type="submit" id="buyBtn"
+                    class="btn btn--primary btn--large buy__cta"
+                    data-cta="comprar">
+              <span class="buy__cta-label">Continuar al pago · <span id="buyCtaTotal">$10.000</span></span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </button>
+
+            <p class="buy__error" id="buyError" hidden>
+              Algo salió mal guardando tus datos. Probá de nuevo en unos segundos.
+            </p>
+          </form>
 
           <p class="buy__lock">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="4" y="11" width="16" height="10" rx="2"/>
               <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
             </svg>
-            Pago seguro vía Mercado Pago
+            Pago seguro vía Mercado Pago · Te enviamos la entrada al mail
           </p>
         </div>
       </div>

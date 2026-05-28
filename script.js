@@ -20,6 +20,9 @@
     4: 'https://mpago.la/1DNuDuK', // $28.000
   };
 
+  // FormSubmit endpoint — captures buyer data before MP redirect
+  const FORM_ENDPOINT = 'https://formsubmit.co/ajax/fernandoalcarazp@gmail.com';
+
   // ---------- Helpers ----------
   const $  = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -109,6 +112,10 @@
   const brkTotal    = $('#brkTotal');
   const brkHint     = $('#brkHint');
   const buyBtn      = $('#buyBtn');
+  const buyCtaTotal = $('#buyCtaTotal');
+  const buyQtyField   = $('#buyQty');
+  const buyTotalField = $('#buyTotal');
+  const buyMpLinkField = $('#buyMpLink');
 
   let qty = 1;
 
@@ -153,9 +160,13 @@
     if (qtyMinus) qtyMinus.disabled = q <= MIN_QTY;
     if (qtyPlus)  qtyPlus.disabled  = q >= MAX_QTY;
 
-    if (buyBtn) {
-      buyBtn.href = buildMPUrl(q);
-    }
+    // Update CTA label with current total
+    if (buyCtaTotal) buyCtaTotal.textContent = formatARS(subtotal);
+
+    // Update hidden form fields for the email notification
+    if (buyQtyField)    buyQtyField.value    = q === 1 ? '1 entrada' : `${q} entradas`;
+    if (buyTotalField)  buyTotalField.value  = `${formatARS(subtotal)} ARS`;
+    if (buyMpLinkField) buyMpLinkField.value = buildMPUrl(q);
   }
 
   if (qtyMinus && qtyPlus && qtyCountEl) {
@@ -172,6 +183,80 @@
       }
     });
     render(qty);
+  }
+
+  // ---------- Buy form: capture data → send to email → open MP ----------
+  const buyForm   = $('#buyForm');
+  const buyError  = $('#buyError');
+
+  if (buyForm) {
+    buyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!buyForm.checkValidity()) {
+        buyForm.reportValidity();
+        return;
+      }
+
+      const name     = $('#buyName').value.trim();
+      const email    = $('#buyEmail').value.trim();
+      const whatsapp = $('#buyWhatsapp').value.trim();
+      const unit     = unitPrice(qty);
+      const subtotal = unit * qty;
+      const mpUrl    = buildMPUrl(qty);
+
+      // Persist for gracias.html to render the ticket
+      try {
+        sessionStorage.setItem('js_name', name);
+        sessionStorage.setItem('js_email', email);
+        sessionStorage.setItem('js_whatsapp', whatsapp);
+        sessionStorage.setItem('js_qty', String(qty));
+        sessionStorage.setItem('js_total', String(subtotal));
+        sessionStorage.setItem('js_mpUrl', mpUrl);
+      } catch (_) {}
+
+      // UI: loading state
+      buyBtn.disabled = true;
+      const originalLabel = buyBtn.innerHTML;
+      buyBtn.innerHTML = '<span>Procesando...</span>';
+      if (buyError) buyError.hidden = true;
+
+      // Send to FormSubmit (fer's inbox) — fire and continue.
+      // Even if it fails, we don't block the purchase; we just log.
+      try {
+        const fd = new FormData(buyForm);
+        const response = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: fd
+        });
+        // FormSubmit returns 200 even on first-verification step
+        if (!response.ok) {
+          console.warn('FormSubmit non-OK status:', response.status);
+        }
+      } catch (err) {
+        console.warn('FormSubmit fetch failed:', err);
+        // Don't block — buyer can still pay
+      }
+
+      // Open Mercado Pago in a new tab
+      const mpWindow = window.open(mpUrl, '_blank', 'noopener,noreferrer');
+
+      // If popup was blocked, fall back to same-tab redirect
+      if (!mpWindow) {
+        window.location.href = mpUrl;
+        return;
+      }
+
+      // Restore button + show success state
+      buyBtn.disabled = false;
+      buyBtn.innerHTML = originalLabel;
+
+      // Optional: redirect this tab to /gracias after a short moment
+      // so when they come back from MP, they have the entrada
+      setTimeout(() => {
+        window.location.href = '/gracias.html';
+      }, 800);
+    });
   }
 
   // ---------- Smooth scroll for in-page anchors ----------

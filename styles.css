@@ -779,8 +779,40 @@ section {
 
 .buy__cta {
   width: 100%;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   padding: 18px 28px;
+  margin-top: 4px;
+}
+
+.buy__cta .buy__cta-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.buy__form {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.buy__form .field {
+  margin-bottom: 0;
+}
+
+.buy__error {
+  color: #e07570;
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.buy__cta:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .buy__lock {
@@ -1175,6 +1207,41 @@ section {
   font-size: 1.05rem;
   max-width: 460px;
   line-height: 1.6;
+}
+
+.gracias__info {
+  margin-top: 28px;
+  padding: 24px 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(244, 213, 188, 0.03);
+  max-width: 460px;
+}
+
+.gracias__info-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.gracias__info-text {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+.gracias__wa {
+  font-size: 0.9rem;
+  padding: 12px 22px;
+}
+
+.gracias__wa svg {
+  flex-shrink: 0;
 }
 
 /* Form */
